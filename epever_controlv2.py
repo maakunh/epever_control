@@ -17,7 +17,7 @@
 ## https://numato.com/product-category/automation/relay-modules/usb-relay/
 #->USB to RS485 adapter
 ## https://www.google.com/search?q=USB+to+RS485+adapter
-## I use these products below.
+## I use products below.
 ### DSD TECH SH-U08A
 ### DSD TECH SH-U11
 ### Additional Information ###
