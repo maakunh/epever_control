@@ -72,6 +72,7 @@ class epever_control_db:
             ret = self.lvError
 
         conn.close()
+        return ret
 
 
 #this module test
