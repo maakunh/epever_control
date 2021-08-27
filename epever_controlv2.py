@@ -128,7 +128,7 @@ if ret == lvNormal:
     Relay3 = cls_epever_control_db.Relay3
 elif ret == lvError:
     sys.exit(1)
-
+#####Relay=x:x:x:x...
 # dbname = dbPath
 # print(dbname)
 # conn = sqlite3.connect(dbname)
@@ -160,19 +160,19 @@ if dt_now > Starttime:
             relay_status1 = result.stdout.decode().replace('\r\n','')
             if relay_status1 == "off":
                 result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' on', shell=True)
-                lvalue.append('relay' + Relay1 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 1strelay') #history data1:2
+                lvalue.append('relay' + Relay1 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 1st relay') #history data1:2
             elif relay_status1 == "on":
                     result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
                     relay_status2 = result.stdout.decode().replace('\r\n','')
                     if relay_status2 == "off":
                         result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' on', shell=True)
-                        lvalue.append('relay' + Relay2 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 2ndrelay') #history data1:2
+                        lvalue.append('relay' + Relay2 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 2nd relay') #history data1:2
                     elif relay_status2 == "on":
                         result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3, shell=True, stdout = subprocess.PIPE)
                         relay_status3 = result.stdout.decode().replace('\r\n','')
                         if relay_status3 == "off":
                             result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' on', shell=True)
-                            lvalue.append('relay' + Relay3 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rdrelay') #history data1:2
+                            lvalue.append('relay' + Relay3 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rd relay') #history data1:2
                         elif relay_status3 == "on":
                             lvalue.append('relay full on dt_time>Startime dt_time<Endtime valV>Vmax control full ') #history data1:2
         elif valV < Vmin:

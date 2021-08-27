@@ -1,13 +1,26 @@
 #epever_control_common.py
 #epever control ver 2.0 Update: 27/08/2021
+## Modified: 28/08/2021
 #Author: Masafumi Hiura
 #URL: https://github.com/maakunh/epever_control
 #This code is the common parameter/function of epever_control 
 
+import time
 import datetime
 import time
 import sqlite3
+import re
+
 import epever_control_setting
+
+# import EPsolarTracerClient
+from pyepsolartracer.client import EPsolarTracerClient
+from pyepsolartracer.registers import registers,coils
+# import the server implementation
+from pymodbus.client.sync import ModbusSerialClient as ModbusClient
+from pymodbus.mei_message import *
+from pyepsolartracer.registers import registers,coils
+import serial.rs485
 
 class epever_control_commonvalue:
      def __init__(self):
@@ -40,7 +53,7 @@ class epever_control_db:
         cur = conn.cursor()
         try:
             cur.execute("SELECT * FROM control WHERE num =" + str(ctrlNum))
-            self.ctrllist = cur.fetchone()
+            self.lstCtrl = cur.fetchone()
             ret = self.lvNormal
         except sqlite3.Error as e:
             print(e)
@@ -49,13 +62,13 @@ class epever_control_db:
         conn.close()
 
         #set result values
-        self.Vmax = float(self.ctrllist[1])
-        self.Vmin = float(self.ctrllist[2])
-        self.Startime = datetime.datetime(year=int(self.dt_now.strftime('%Y')), month=int(self.dt_now.strftime('%m')), day=int(self.dt_now.strftime('%d')), hour=int(self.ctrllist[3].strip()[:2]),  minute=int(self.ctrllist[3].strip()[2:]))
-        self.Endtime = self.Startime + datetime.timedelta(hours=int(self.ctrllist[4][:2]),  minutes=int(self.ctrllist[4][2:]))
-        self.Relay1 = self.ctrllist[5]
-        self.Relay2 = self.ctrllist[6]
-        self.Relay3 = self.ctrllist[7]
+        self.Vmax = float(self.lstCtrl[1])
+        self.Vmin = float(self.lstCtrl[2])
+        self.Startime = datetime.datetime(year=int(self.dt_now.strftime('%Y')), month=int(self.dt_now.strftime('%m')), day=int(self.dt_now.strftime('%d')), hour=int(self.lstCtrl[3].strip()[:2]),  minute=int(self.lstCtrl[3].strip()[2:]))
+        self.Endtime = self.Startime + datetime.timedelta(hours=int(self.lstCtrl[4][:2]),  minutes=int(self.lstCtrl[4][2:]))
+        self.Relay1 = self.lstCtrl[5]
+        self.Relay2 = self.lstCtrl[6]
+        self.Relay3 = self.lstCtrl[7]
     
         return ret
     
@@ -73,15 +86,72 @@ class epever_control_db:
 
         conn.close()
         return ret
+    
+    def read_colname(self, dbpath):
+        conn = sqlite3.connect(dbpath)
+        cur = conn.cursor()
 
+        try:
+            cur.execute("SELECT * FROM colname")
+            self.lstColname = cur.fetchone()
+            ret = self.lvNormal
+        except sqlite3.Error as e:
+            print(e)
+            ret = self.lvError
+    
+        conn.close()
+        return ret
 
+    def write_recordall(self, dbPath, lvalue):
+        conn = sqlite3.connect(dbPath)
+        cur = conn.cursor()
+
+        try:
+            cur.execute("INSERT INTO recordall VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", lvalue)
+            conn.commit()
+            ret = self.lvNormal
+        except sqlite3.Error as e:
+            print(e)
+            ret = self.lvError
+
+        conn.close()
+        return ret
+
+class epever_control_tool:
+    def __init__(self):
+        cls_epever_control_common = epever_control_commonvalue()
+        self.lvNormal = cls_epever_control_common.lvNormal
+        self.lvError = cls_epever_control_common.lvError
+
+    def to_numericval_unit(self, strr):
+        exvalue = strr.split('=', 1)[1] #extract value
+        m = re.findall(r'\d+', exvalue)
+        mlen = len(m)
+        exvaluelen = len(exvalue)
+        if mlen == 2:
+            numericval = m[0] + '.' + m[1]
+            numericlen = len(m[0]) + 1 + len(m[1])
+        elif mlen == 1:
+            numericval = m[0]
+            numericlen = len(m[0])
+        elif mlen == 0:
+            numericval = '-'
+            numericlen = 1
+        
+        self.to_numericval = numericval
+        self.to_unit = exvalue[numericlen + 1:]
+
+        
 #this module test
 #You can test epever_control_setting.py in command line console.
 def Test():
+    cls_epever_control_commonvalue = epever_control_commonvalue()
+
     cls_epever_control_db = epever_control_db()
     print('dbPath = ' + cls_epever_control_db.dbPath)
     if cls_epever_control_db.read_control_nums(cls_epever_control_db.dbPath) == cls_epever_control_db.lvNormal:
         for num in cls_epever_control_db.numlist:
+            print("table [control]******************")
             print('ctrlNum = ' + str(num[0]))
             print('read_control = ' + str(cls_epever_control_db.read_control(cls_epever_control_db.dbPath, num[0])))
             print('read_control_Vmax = ' + str(cls_epever_control_db.Vmax))
@@ -91,5 +161,24 @@ def Test():
             print('read_control_Relay1 = ' + cls_epever_control_db.Relay1)
             print('read_control_Relay2 = ' + cls_epever_control_db.Relay2)
             print('read_control_Relay3 = ' + cls_epever_control_db.Relay3)
+
+    if cls_epever_control_db.read_colname(cls_epever_control_db.dbPath) == cls_epever_control_commonvalue.lvNormal:
+        print("epever parameters******************")
+        for lst in cls_epever_control_db.lstColname:
+            print(lst)
+
+    cls_epever_control_tool = epever_control_tool()
+    strr = "Charging equipment input current = 27.15V"
+    print(strr)
+    result = cls_epever_control_tool.to_numericval_unit(strr)
+    print(cls_epever_control_tool.to_numericval)
+    print(cls_epever_control_tool.to_unit)
+    strr = "Charging equipment input current = 999.99ABCD"
+    print(strr)
+    result = cls_epever_control_tool.to_numericval_unit(strr)
+    print(cls_epever_control_tool.to_numericval)
+    print(cls_epever_control_tool.to_unit)
+
+
 if __name__ == '__main__':
     Test()
