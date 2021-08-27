@@ -1,5 +1,12 @@
 #epever_controlv2.py
+#############################################
+#----new information----
+#epever control ver 2.01 Update: 27/08/2021
+##common value/function use this module.
+#----last information----
 #epever control ver 2.0 Update: 26/08/2021
+##create
+#############################################
 #Author: Masafumi Hiura
 #URL: https://github.com/maakunh/epever_control
 #This code watch output voltage of Charge Controllers, and control on/off of relays conected Inverters(GTI etc). 
@@ -42,7 +49,14 @@ import datetime
 import sys
 import sqlite3
 import subprocess
+
 import epever_control_setting
+import epever_control_common
+
+#read common value
+cls_epever_control_common_value = epever_control_common.epever_control_commonvalue()
+lvNormal = cls_epever_control_common_value.lvNormal
+lvError = cls_epever_control_common_value.lvError
 
 if (len(sys.argv) < 1):
 	print("Usage: epever_controlvx.py <control number>")
@@ -102,25 +116,38 @@ lvalue.append(valV) #history data
 lvalue.append(valC) #history data
 
 # database connection
-dbname = dbPath
-print(dbname)
-conn = sqlite3.connect(dbname)
-cur = conn.cursor()
+cls_epever_control_db = epever_control_common.epever_control_db()
+ret = cls_epever_control_db.read_control(dbPath, ctrlNum)
+if ret == lvNormal:
+    Vmax = cls_epever_control_db.Vmax
+    Vmin = cls_epever_control_db.Vmin
+    Starttime = cls_epever_control_db.Startime
+    Endtime = cls_epever_control_db.Endtime
+    Relay1 = cls_epever_control_db.Relay1
+    Relay2 = cls_epever_control_db.Relay2
+    Relay3 = cls_epever_control_db.Relay3
+elif ret == lvError:
+    sys.exit(1)
 
-try:
-    cur.execute("SELECT * FROM control WHERE num =" + ctrlNum)
-    ctrllist = cur.fetchone()
-except sqlite3.Error as e:
-    print(e)
-    sys.exit(0)
+# dbname = dbPath
+# print(dbname)
+# conn = sqlite3.connect(dbname)
+# cur = conn.cursor()
+
+# try:
+#     cur.execute("SELECT * FROM control WHERE num =" + ctrlNum)
+#     ctrllist = cur.fetchone()
+# except sqlite3.Error as e:
+#     print(e)
+#     sys.exit(0)
     
-Vmax = float(ctrllist[1])
-Vmin = float(ctrllist[2])
-Starttime = datetime.datetime(year=int(dt_now.strftime('%Y')), month=int(dt_now.strftime('%m')), day=int(dt_now.strftime('%d')), hour=int(ctrllist[3].strip()[:2]),  minute=int(ctrllist[3].strip()[2:]))
-Endtime = Starttime + datetime.timedelta(hours=int(ctrllist[4][:2]),  minutes=int(ctrllist[4][2:]))
-Relay1 = ctrllist[5]
-Relay2 = ctrllist[6]
-Relay3 = ctrllist[7]
+# Vmax = float(ctrllist[1])
+# Vmin = float(ctrllist[2])
+# Starttime = datetime.datetime(year=int(dt_now.strftime('%Y')), month=int(dt_now.strftime('%m')), day=int(dt_now.strftime('%d')), hour=int(ctrllist[3].strip()[:2]),  minute=int(ctrllist[3].strip()[2:]))
+# Endtime = Starttime + datetime.timedelta(hours=int(ctrllist[4][:2]),  minutes=int(ctrllist[4][2:]))
+# Relay1 = ctrllist[5]
+# Relay2 = ctrllist[6]
+# Relay3 = ctrllist[7]
 
 print('Process start from ' + str(Starttime))
 print ('Process end to ' + str(Endtime))
@@ -133,19 +160,19 @@ if dt_now > Starttime:
             relay_status1 = result.stdout.decode().replace('\r\n','')
             if relay_status1 == "off":
                 result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' on', shell=True)
-                lvalue.append('relay' + Relay1 + '　on dt_time>Startime dt_time<Endtime valV>Vmax control start 1strelay') #history data1:2
+                lvalue.append('relay' + Relay1 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 1strelay') #history data1:2
             elif relay_status1 == "on":
                     result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
                     relay_status2 = result.stdout.decode().replace('\r\n','')
                     if relay_status2 == "off":
                         result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' on', shell=True)
-                        lvalue.append('relay' + Relay2 + '　on dt_time>Startime dt_time<Endtime valV>Vmax control start 2ndrelay') #history data1:2
+                        lvalue.append('relay' + Relay2 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 2ndrelay') #history data1:2
                     elif relay_status2 == "on":
                         result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3, shell=True, stdout = subprocess.PIPE)
                         relay_status3 = result.stdout.decode().replace('\r\n','')
                         if relay_status3 == "off":
                             result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' on', shell=True)
-                            lvalue.append('relay' + Relay3 + '　on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rdrelay') #history data1:2
+                            lvalue.append('relay' + Relay3 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rdrelay') #history data1:2
                         elif relay_status3 == "on":
                             lvalue.append('relay full on dt_time>Startime dt_time<Endtime valV>Vmax control full ') #history data1:2
         elif valV < Vmin:
@@ -153,19 +180,19 @@ if dt_now > Starttime:
             relay_status3 = result.stdout.decode().replace('\r\n','')
             if relay_status3 == "on":
                 result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' off', shell=True)
-                lvalue.append('relay' + Relay3 + '　off dt_time>Startime dt_time<Endtime valV<Vmin 3rd relay temporary off(voltage lower limit)') #history data1:2
+                lvalue.append('relay' + Relay3 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 3rd relay temporary off(voltage lower limit)') #history data1:2
             elif relay_status3 == "off":
                     result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
                     relay_status2 = result.stdout.decode().replace('\r\n','')
                     if relay_status2 == "on":
                         result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' off', shell=True)
-                        lvalue.append('relay' + Relay2 + '　on dt_time>Startime dt_time<Endtime valV<Vmin 2nd relay temporary stop(voltage lower limit)') #history data1:2
+                        lvalue.append('relay' + Relay2 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 2nd relay temporary stop(voltage lower limit)') #history data1:2
                     elif relay_status2 == "off":
                         result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1, shell=True, stdout = subprocess.PIPE)
                         relay_status1 = result.stdout.decode().replace('\r\n','')
                         if relay_status1 == "on":
                             result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' off', shell=True)
-                            lvalue.append('relay' + Relay1 + '　off dt_time>Startime dt_time<Endtime valV<Vmin 1st relay temporary stop(voltage lower limit)') #history data1:2
+                            lvalue.append('relay' + Relay1 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 1st relay temporary stop(voltage lower limit)') #history data1:2
                         elif relay_status1 == "off":
                             lvalue.append('relay all off dt_time>Startime dt_time<Endtime valV<Vmin not control') #history data
         else:
@@ -205,12 +232,17 @@ elif dt_now == Starttime:
 
 print(lvalue)
 
-try:
-    cur.execute("INSERT INTO control_history VALUES(?, ?, ?, ?, ?)", lvalue)
-    conn.commit()
-except sqlite3.Error as e:
-    print(e)
+retv = cls_epever_control_db.write_control_history(dbPath, lvalue)
+if retv == lvNormal:
+    sys.exit(0)
+elif retv == lvError:
+    sys.exit(1)
+# try:
+#     cur.execute("INSERT INTO control_history VALUES(?, ?, ?, ?, ?)", lvalue)
+#     conn.commit()
+# except sqlite3.Error as e:
+#     print(e)
  
-conn.close()
+# conn.close()
 
 

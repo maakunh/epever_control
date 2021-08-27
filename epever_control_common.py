@@ -9,11 +9,16 @@ import time
 import sqlite3
 import epever_control_setting
 
-
-class epever_control_db:
-    def __init__(self):
+class epever_control_commonvalue:
+     def __init__(self):
         self.lvNormal = 0
         self.lvError = 1
+         
+class epever_control_db:
+    def __init__(self):
+        cls_epever_control_common = epever_control_commonvalue()
+        self.lvNormal = cls_epever_control_common.lvNormal
+        self.lvError = cls_epever_control_common.lvError
         self.dbPath = epever_control_setting.epever_control_dbpath()
         self.dt_now = datetime.datetime.now()
 
@@ -53,6 +58,20 @@ class epever_control_db:
         self.Relay3 = self.ctrllist[7]
     
         return ret
+    
+    def write_control_history(self, dbPath, lvalue):
+        conn = sqlite3.connect(dbPath)
+        cur = conn.cursor()
+
+        try:
+            cur.execute("INSERT INTO control_history VALUES(?, ?, ?, ?, ?)", lvalue)
+            conn.commit()
+            ret = self.lvNormal
+        except sqlite3.Error as e:
+            print(e)
+            ret = self.lvError
+
+        conn.close()
 
 
 #this module test
