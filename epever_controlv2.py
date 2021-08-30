@@ -168,7 +168,7 @@ if dt_now > Starttime:
                 result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' on', shell=True)
                 lvalue.append('relay' + Relay1 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 1st relay') #history data1:2
                 linemsg_update_flg = cls_epever_control_common_value.update_flg_linemsg_on
-                linemsg_msg = 'relay' + Relay1 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 1st relay\r\nVoltage = '+ valV + '(>' + Vmax + 'V) Current = ' + valC + '\r\n'
+                linemsg_msg = 'relay' + Relay1 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 1st relay\r\nVoltage = '+ str(valV) + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '\r\n'
 
             elif relay_status1 == "on":
                     result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
@@ -177,7 +177,7 @@ if dt_now > Starttime:
                         result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' on', shell=True)
                         lvalue.append('relay' + Relay2 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 2nd relay') #history data1:2
                         linemsg_update_flg = cls_epever_control_common_value.update_flg_linemsg_on
-                        linemsg_msg = 'relay' + Relay2 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 2nd relay\r\nVoltage = ' + valV  + '(>' + Vmax + 'V) Current = ' + valC + '\r\n'
+                        linemsg_msg = 'relay' + Relay2 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 2nd relay\r\nVoltage = ' + str(valV)  + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '\r\n'
                     elif relay_status2 == "on":
                         result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3, shell=True, stdout = subprocess.PIPE)
                         relay_status3 = result.stdout.decode().replace('\r\n','')
@@ -185,7 +185,7 @@ if dt_now > Starttime:
                             result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' on', shell=True)
                             lvalue.append('relay' + Relay3 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rd relay') #history data1:2
                             linemsg_update_flg = cls_epever_control_common_value.update_flg_linemsg_on
-                            linemsg_msg = 'relay' + Relay3 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rd relay\r\nVoltage = ' + valV + '(>' + Vmax + 'V) Current = ' + valC + '\r\n'
+                            linemsg_msg = 'relay' + Relay3 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rd relay\r\nVoltage = ' + str(valV) + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '\r\n'
                         elif relay_status3 == "on":
                             lvalue.append('relay full on dt_time>Startime dt_time<Endtime valV>Vmax control full ') #history data1:2
         elif valV < Vmin:
@@ -195,7 +195,7 @@ if dt_now > Starttime:
                 result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' off', shell=True)
                 lvalue.append('relay' + Relay3 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 3rd relay temporary off(voltage lower limit)') #history data1:2
                 linemsg_update_flg = cls_epever_control_common_value.update_flg_linemsg_on
-                linemsg_msg = 'relay' + Relay3 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 3rd relay temporary off(voltage lower limit)\r\nVoltage = ' + valV + '(<' + Vmin + 'V) Current = ' + valC + '\r\n'
+                linemsg_msg = 'relay' + Relay3 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 3rd relay temporary off(voltage lower limit)\r\nVoltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '\r\n'
             elif relay_status3 == "off":
                     result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
                     relay_status2 = result.stdout.decode().replace('\r\n','')
@@ -203,7 +203,7 @@ if dt_now > Starttime:
                         result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' off', shell=True)
                         lvalue.append('relay' + Relay2 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 2nd relay temporary stop(voltage lower limit)') #history data1:2
                         linemsg_update_flg = cls_epever_control_common_value.update_flg_linemsg_on
-                        linemsg_msg = 'relay' + Relay2 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 2nd relay temporary stop(voltage lower limit)\r\nVoltage = ' + valV + '(<' + Vmin + 'V) Current = ' + valC + '\r\n'
+                        linemsg_msg = 'relay' + Relay2 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 2nd relay temporary stop(voltage lower limit)\r\nVoltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '\r\n'
                     elif relay_status2 == "off":
                         result = subprocess.run('py.exe ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1, shell=True, stdout = subprocess.PIPE)
                         relay_status1 = result.stdout.decode().replace('\r\n','')
@@ -211,7 +211,7 @@ if dt_now > Starttime:
                             result = subprocess.run('py.exe ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' off', shell=True)
                             lvalue.append('relay' + Relay1 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 1st relay temporary stop(voltage lower limit)') #history data1:2
                             linemsg_update_flg = cls_epever_control_common_value.update_flg_linemsg_on
-                            linemsg_msg = 'relay' + Relay1 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 1st relay temporary stop(voltage lower limit)\r\nVoltage = ' + valV + '(<' + Vmin + 'V) Current = ' + valC + '\r\n'
+                            linemsg_msg = 'relay' + Relay1 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 1st relay temporary stop(voltage lower limit)\r\nVoltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '\r\n'
                         elif relay_status1 == "off":
                             lvalue.append('relay all off dt_time>Startime dt_time<Endtime valV<Vmin not control') #history data
         else:
