@@ -37,6 +37,12 @@ def numato_relayread_py():
     return r'\\desktop-2322pph\Users\Public\numato\relayread.py'
 
 
+#LINE Messaging API
+def line_message_enable():
+    return True #If you don't use LINE Messaging API, change False
+def line_message_dbpath():
+    return r'\\DESKTOP-2322PPH\Users\Public\line_message\linemessage.db'
+
 #this module test
 #You can test epever_control_setting.py in command line console.
 def test():

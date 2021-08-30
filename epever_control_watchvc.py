@@ -1,5 +1,6 @@
 #epever_control_watchvc.py
 #epever control ver 2.0 Update: 26/08/2021
+##Modified: 28/08/2021
 #Author: Masafumi Hiura
 #URL: https://github.com/maakunh/epever_control
 #This code read input/output voltage/current from Epever Charge Controllers. 
@@ -58,7 +59,7 @@ for portName in portNames:
 	response = client.read_input("Charging equipment input voltage")
 	strr = str(response)
 	print(strr)
-	exvalue = strr.split('=', 1)[1].strip()[:-1] #extract value
+	exvalue = strr.split('=')[1].strip()[:-1] #extract value
 	print(exvalue) #extract value
 	lvalue.append(exvalue)
 	Vin = Vin + float(exvalue)
