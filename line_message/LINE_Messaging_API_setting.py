@@ -12,13 +12,19 @@
 import json
 import urllib.request
 
+
 class LINE_Messaging_API:
     def __init__(self):
         self.lvNormal = 0
         self.lvError = 1
+
+        #This database is used in this code. Change parameter for your environment.
+        self.line_message_db_path = r'\\DESKTOP-2322PPH\Users\Public\epever\line_message\linemessage.db'
+
         #these parameter is secret. DO NOT present to the public!!!
-        self.CHANNEL_ACCESS_TOKEN = "Bearer {}"
-        self.USER_ID = ""
+        #change your information get from LINE Developers.
+        self.CHANNEL_ACCESS_TOKEN = "Bearer {add your token}"
+        self.USER_ID = "your user id"
 
         #LINE Messaging API urls
         ##Push Message(POST)

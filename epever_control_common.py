@@ -26,9 +26,9 @@ class epever_control_commonvalue:
      def __init__(self):
         self.lvNormal = 0
         self.lvError = 1
-        self.update_flg_linemsg_on = 2
-        self.update_flg_linemsg_off = 9
-        self.update_flg_linemsg_ignore = 99
+        # self.update_flg_linemsg_on = 2
+        # self.update_flg_linemsg_off = 9
+        # self.update_flg_linemsg_ignore = 99
          
 class epever_control_db:
     def __init__(self):
@@ -37,8 +37,8 @@ class epever_control_db:
         self.lvError = cls_epever_control_common.lvError
         self.dbPath = epever_control_setting.epever_control_dbpath()
         self.dt_now = datetime.datetime.now()
-        self.line_message_enable = epever_control_setting.line_message_enable()
-        self.line_message_dbPath = epever_control_setting.line_message_dbpath()
+        # self.line_message_enable = epever_control_setting.line_message_enable()
+        # self.line_message_dbPath = epever_control_setting.line_message_dbpath()
 
     def read_control_nums(self, dbPath):
         conn = sqlite3.connect(dbPath)
@@ -122,74 +122,74 @@ class epever_control_db:
         conn.close()
         return ret
     
-    def read_line_message_maxnumber(self, dbPath):
-        conn = sqlite3.connect(dbPath)
-        cur = conn.cursor()
+    # def read_line_message_maxnumber(self, dbPath):
+    #     conn = sqlite3.connect(dbPath)
+    #     cur = conn.cursor()
 
-        try:
-            cur.execute("SELECT MAX(number) FROM line_message")
-            self.line_message_maxnumber = cur.fetchone()[0]
-            ret = self.lvNormal
-        except sqlite3.Error as e:
-            print(e)
-            ret = self.lvError
-        conn.close()
-        return ret
+    #     try:
+    #         cur.execute("SELECT MAX(number) FROM line_message")
+    #         self.line_message_maxnumber = cur.fetchone()[0]
+    #         ret = self.lvNormal
+    #     except sqlite3.Error as e:
+    #         print(e)
+    #         ret = self.lvError
+    #     conn.close()
+    #     return ret
 
-    def read_line_message_unsend_to_on(self, dbPath, update_flg):
-        conn = sqlite3.connect(dbPath)
-        cur = conn.cursor()
+    # def read_line_message_unsend_to_on(self, dbPath, update_flg):
+    #     conn = sqlite3.connect(dbPath)
+    #     cur = conn.cursor()
 
-        try:
-            cur.execute("SELECT * FROM line_message WHERE update_flg = '" + str(update_flg) + "'")
-            self.linemsg_send_list = cur.fetchall()
-            ret = self.lvNormal
-        except sqlite3.Error as e:
-            print(e)
-            ret = self.lvError
-        conn.close()
-        return ret
+    #     try:
+    #         cur.execute("SELECT * FROM line_message WHERE update_flg = '" + str(update_flg) + "'")
+    #         self.linemsg_send_list = cur.fetchall()
+    #         ret = self.lvNormal
+    #     except sqlite3.Error as e:
+    #         print(e)
+    #         ret = self.lvError
+    #     conn.close()
+    #     return ret
 
-    def write_line_message(self, dbPath, update_flg, request_datetime, send_datetime, msg, number):
-        conn = sqlite3.connect(dbPath)
-        cur = conn.cursor()
-        strList = list()
-        # strList = strList.append(update_flg)
-        # strList = strList.append(msg)
-        # strList = strList.append(request_datetime)
-        # strList = strList.appned(send_datetime)
-        # strList = strList.append(number)
-        print(update_flg)
-        print(request_datetime)
-        print(send_datetime)
-        print(msg)
-        print(number)
-        try:
-            cur.execute("INSERT INTO line_message VALUES('" + str(update_flg) + "', '" + msg + "', '" + request_datetime + "', '" + send_datetime + "', " + str(number) + ")")
-            conn.commit()
-            ret = self.lvNormal
-        except sqlite3.Error as e:
-            print(e)
-            ret = self.lvError
+    # def write_line_message(self, dbPath, update_flg, request_datetime, send_datetime, msg, number):
+    #     conn = sqlite3.connect(dbPath)
+    #     cur = conn.cursor()
+    #     strList = list()
+    #     # strList = strList.append(update_flg)
+    #     # strList = strList.append(msg)
+    #     # strList = strList.append(request_datetime)
+    #     # strList = strList.appned(send_datetime)
+    #     # strList = strList.append(number)
+    #     print(update_flg)
+    #     print(request_datetime)
+    #     print(send_datetime)
+    #     print(msg)
+    #     print(number)
+    #     try:
+    #         cur.execute("INSERT INTO line_message VALUES('" + str(update_flg) + "', '" + msg + "', '" + request_datetime + "', '" + send_datetime + "', " + str(number) + ")")
+    #         conn.commit()
+    #         ret = self.lvNormal
+    #     except sqlite3.Error as e:
+    #         print(e)
+    #         ret = self.lvError
 
-        conn.close()
-        return ret
+    #     conn.close()
+    #     return ret
 
-    def update_line_message_unsent_to_sent(self, dbPath, send_datetime, number):
-        cls_epever_control_common = epever_control_commonvalue()
+    # def update_line_message_unsent_to_sent(self, dbPath, send_datetime, number):
+    #     cls_epever_control_common = epever_control_commonvalue()
         
-        conn = sqlite3.connect(dbPath)
-        cur = conn.cursor()
-        try:
-            cur.execute("UPDATE line_message SET update_flg = '" + str(cls_epever_control_common.update_flg_linemsg_off) + "', send_datetime = '" + send_datetime + "' WHERE number = " + str(number))
-            conn.commit()
-            ret = self.lvNormal
-        except sqlite3.Error as e:
-            print(e)
-            ret = self.lvError
+    #     conn = sqlite3.connect(dbPath)
+    #     cur = conn.cursor()
+    #     try:
+    #         cur.execute("UPDATE line_message SET update_flg = '" + str(cls_epever_control_common.update_flg_linemsg_off) + "', send_datetime = '" + send_datetime + "' WHERE number = " + str(number))
+    #         conn.commit()
+    #         ret = self.lvNormal
+    #     except sqlite3.Error as e:
+    #         print(e)
+    #         ret = self.lvError
 
-        conn.close()
-        return ret
+    #     conn.close()
+    #     return ret
 
 
 
@@ -255,13 +255,13 @@ def Test():
     print(cls_epever_control_tool.to_numericval)
     print(cls_epever_control_tool.to_unit)
 
-    result = cls_epever_control_db.read_line_message_maxnumber(cls_epever_control_db.line_message_dbPath)
-    print(cls_epever_control_db.line_message_maxnumber + 1)
-    cls_epever_control_db.write_line_message(cls_epever_control_db.line_message_dbPath, cls_epever_control_commonvalue.update_flg_linemsg_on, '2021/08/29 22:15:00', '2021/08/29 22:15:00', 'test', cls_epever_control_db.line_message_maxnumber + 1)
+    # result = cls_epever_control_db.read_line_message_maxnumber(cls_epever_control_db.line_message_dbPath)
+    # print(cls_epever_control_db.line_message_maxnumber + 1)
+    # cls_epever_control_db.write_line_message(cls_epever_control_db.line_message_dbPath, cls_epever_control_commonvalue.update_flg_linemsg_on, '2021/08/29 22:15:00', '2021/08/29 22:15:00', 'test', cls_epever_control_db.line_message_maxnumber + 1)
 
-    print("LINE Messaging API settings")
-    print(cls_epever_control_db.line_message_enable)
-    print(cls_epever_control_db.line_message_dbPath)
+    # print("LINE Messaging API settings")
+    # print(cls_epever_control_db.line_message_enable)
+    # print(cls_epever_control_db.line_message_dbPath)
 
 if __name__ == '__main__':
     Test()
