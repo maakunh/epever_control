@@ -7,6 +7,9 @@
 #These parameters below are samples.
 
 #epever_control setting
+def epever_control_python():
+    return r'py.exe'
+    
 def epever_control_dbpath():
     return r'\\DESKTOP-2322PPH\Users\Public\epever\epever.db'
 
