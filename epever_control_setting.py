@@ -38,10 +38,23 @@ def numato_relayread_py():
 
 
 #LINE Messaging API
+def update_flg_linemsg_on():
+    return 2
+
+def update_flg_linemsg_off():
+    return 9
+
+def update_flg_linemsg_ignore():
+    return 99
+
 def line_message_enable():
     return True #If you don't use LINE Messaging API, change False
+
 def line_message_dbpath():
     return r'\\DESKTOP-2322PPH\Users\Public\line_message\linemessage.db'
+
+def line_message_py():
+    return r'\\DESKTOP-2322PPH\Users\Public\line_message\line_message.py'
 
 def line_message_application():
     return 'epever_control'

@@ -26,6 +26,9 @@ class epever_control_commonvalue:
      def __init__(self):
         self.lvNormal = 0
         self.lvError = 1
+        self.flgon = 2
+        self.flgoff = 9
+        self.flgignore = 99
         # self.update_flg_linemsg_on = 2
         # self.update_flg_linemsg_off = 9
         # self.update_flg_linemsg_ignore = 99
