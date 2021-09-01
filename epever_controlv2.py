@@ -68,6 +68,9 @@ else:
     ctrlNum = sys.argv[1]
     linemsg_all = int(sys.argv[2])
 
+print(ctrlNum)
+print(linemsg_all)
+
 #setting
 py = epever_control_setting.epever_control_python()
 portNames = epever_control_setting.epever_control_portName()
@@ -155,7 +158,7 @@ if dt_now > Starttime:
                 result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' on', shell=True)
                 lvalue.append('relay' + Relay1 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 1st relay') #history data1:2
                 linemsg_update_flg = flgon
-                linemsg_msg = 'relay' + Relay1 + ' on \r\ncontrol start 1st relay\r\nVoltage = '+ str(valV) + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '\r\n'
+                linemsg_msg = 'relay' + Relay1 + ' on <br>control start 1st relay<br>Voltage = '+ str(valV) + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '<br>'
 
             elif relay_status1 == "on":
                     result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
@@ -164,7 +167,7 @@ if dt_now > Starttime:
                         result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' on', shell=True)
                         lvalue.append('relay' + Relay2 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 2nd relay') #history data1:2
                         linemsg_update_flg = flgon
-                        linemsg_msg = 'relay' + Relay2 + ' on \r\ncontrol start 2nd relay\r\nVoltage = ' + str(valV)  + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '\r\n'
+                        linemsg_msg = 'relay' + Relay2 + ' on <br>control start 2nd relay<br>Voltage = ' + str(valV)  + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '<br>'
                     elif relay_status2 == "on":
                         result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3, shell=True, stdout = subprocess.PIPE)
                         relay_status3 = result.stdout.decode().replace('\r\n','')
@@ -172,11 +175,11 @@ if dt_now > Starttime:
                             result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' on', shell=True)
                             lvalue.append('relay' + Relay3 + ' on dt_time>Startime dt_time<Endtime valV>Vmax control start 3rd relay') #history data1:2
                             linemsg_update_flg = flgon
-                            linemsg_msg = 'relay' + Relay3 + ' on \r\ncontrol start 3rd relay\r\nVoltage = ' + str(valV) + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '\r\n'
+                            linemsg_msg = 'relay' + Relay3 + ' on <br>control start 3rd relay<br>Voltage = ' + str(valV) + '(>' + str(Vmax) + 'V) Current = ' + str(valC) + '<br>'
                         elif relay_status3 == "on":
                             lvalue.append('relay full on dt_time>Startime dt_time<Endtime valV>Vmax control full ') #history data1:2
                             linemsg_update_flg = linemsg_all
-                            linemsg_msg = 'relay full on dt_time>Startime dt_time<Endtime valV>Vmax control full '
+                            linemsg_msg = 'relay full on <br>dt_time>Startime <br>dt_time<Endtime <br>valV>Vmax <br>control full '
         elif valV < Vmin:
             result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3, shell=True, stdout = subprocess.PIPE)
             relay_status3 = result.stdout.decode().replace('\r\n','')
@@ -184,7 +187,7 @@ if dt_now > Starttime:
                 result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' off', shell=True)
                 lvalue.append('relay' + Relay3 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 3rd relay temporary off(voltage lower limit)') #history data1:2
                 linemsg_update_flg = flgon
-                linemsg_msg = 'relay' + Relay3 + ' off \r\n3rd relay temporary off(voltage lower limit)\r\nVoltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '\r\n'
+                linemsg_msg = 'relay' + Relay3 + ' off <br>3rd relay temporary off(voltage lower limit)<br>Voltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '<br>'
             elif relay_status3 == "off":
                     result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
                     relay_status2 = result.stdout.decode().replace('\r\n','')
@@ -192,7 +195,7 @@ if dt_now > Starttime:
                         result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' off', shell=True)
                         lvalue.append('relay' + Relay2 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 2nd relay temporary stop(voltage lower limit)') #history data1:2
                         linemsg_update_flg = flgon
-                        linemsg_msg = 'relay' + Relay2 + ' off \r\n2nd relay temporary stop(voltage lower limit)\r\nVoltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '\r\n'
+                        linemsg_msg = 'relay' + Relay2 + ' off <br>2nd relay temporary stop(voltage lower limit)<br>Voltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '<br>'
                     elif relay_status2 == "off":
                         result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1, shell=True, stdout = subprocess.PIPE)
                         relay_status1 = result.stdout.decode().replace('\r\n','')
@@ -200,15 +203,15 @@ if dt_now > Starttime:
                             result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' off', shell=True)
                             lvalue.append('relay' + Relay1 + ' off dt_time>Startime dt_time<Endtime valV<Vmin 1st relay temporary stop(voltage lower limit)') #history data1:2
                             linemsg_update_flg = flgon
-                            linemsg_msg = 'relay' + Relay1 + ' off \r\n1st relay temporary stop(voltage lower limit)\r\nVoltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '\r\n'
+                            linemsg_msg = 'relay' + Relay1 + ' off <br>1st relay temporary stop(voltage lower limit)<br>Voltage = ' + str(valV) + '(<' + str(Vmin) + 'V) Current = ' + str(valC) + '<br>'
                         elif relay_status1 == "off":
                             lvalue.append('relay all off dt_time>Startime dt_time<Endtime valV<Vmin not control') #history data
                             linemsg_update_flg = linemsg_all
-                            linemsg_msg = 'relay all off dt_time>Startime dt_time<Endtime valV<Vmin not control'
-                            
+                            linemsg_msg = 'relay all off <br>dt_time>Startime <br>dt_time<Endtime <br>valV<Vmin <br>not control'
+        else:                    
             lvalue.append('dt_time>Startime dt_time<Endtime Vmin<valV<Valmax') #history data
             linemsg_update_flg = linemsg_all
-            linemsg_msg = 'dt_time>Startime dt_time<Endtime Vmin<valV<Valmax'
+            linemsg_msg = 'dt_time>Startime <br>dt_time<Endtime <br>Vmin<valV<Valmax'
 
 #GTI OFF
     elif dt_now > Endtime: #Process End              
@@ -219,7 +222,7 @@ if dt_now > Starttime:
                 result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' off', shell=True)
                 lvalue.append('relay' + Relay3 + ' off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                 linemsg_update_flg = linemsg_all
-                linemsg_msg = 'relay' + Relay3 + ' off dt_time>Startime dt_time>Endtime process end(time over)'
+                linemsg_msg = 'relay' + Relay3 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)'
             elif relay_status3 == "off":
                     result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
                     relay_status2 = result.stdout.decode().replace('\r\n','')
@@ -228,7 +231,7 @@ if dt_now > Starttime:
                         result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' off', shell=True)
                         lvalue.append('relay' + Relay2 + ' off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                         linemsg_update_flg = linemsg_all
-                        linemsg_msg = 'relay' + Relay2 + ' off dt_time>Startime dt_time>Endtime process end(time over)'
+                        linemsg_msg = 'relay' + Relay2 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)'
                     elif relay_status2 == "off":
                         result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1, shell=True, stdout = subprocess.PIPE)
                         relay_status1 = result.stdout.decode().replace('\r\n','')
@@ -237,11 +240,11 @@ if dt_now > Starttime:
                             result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' off', shell=True)
                             lvalue.append('relay' + Relay1 + ' off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                             linemsg_update_flg = linemsg_all
-                            linemsg_msg = 'relay' + Relay1 + ' off dt_time>Startime dt_time>Endtime process end(time over)'
+                            linemsg_msg = 'relay' + Relay1 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)'
                         elif relay_status1 == "off":
                             lvalue.append('relay all off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                             linemsg_update_flg = linemsg_all
-                            linemsg_msg = 'relay all off dt_time>Startime dt_time>Endtime process end(time over)'
+                            linemsg_msg = 'relay all off <br>dt_time>Startime<br> dt_time>Endtime<br> process end(time over)<br>'
 
     elif dt_now == Endtime:
         lvalue.append('dt_now=Endtime else') #history data
@@ -263,8 +266,11 @@ print(lvalue)
 #write database
 retv = cls_epever_control_db.write_control_history(dbPath, lvalue)
 
+print("linemsg_update_flg =" + str(linemsg_update_flg))
+
 if linemsg_update_flg == flgon:
     #request sending LINE message to database
+    print(py + ' ' + linemsg_py + ' r ' + linemsg_dbpath + ' "' + linemsg_msg + '" "' + linemsg_application + '"')
     result = subprocess.run(py + ' ' + linemsg_py + ' r ' + linemsg_dbpath + ' "' + linemsg_msg + '" "' + linemsg_application + '"', shell=True)
            
 if retv == lvNormal:
