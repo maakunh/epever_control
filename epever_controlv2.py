@@ -61,6 +61,9 @@ flgon = cls_epever_control_common_value.flgon
 flgoff = cls_epever_control_common_value.flgoff
 flgignore = cls_epever_control_common_value.flgignore
 
+#common tool
+cls_epever_control_tool = epever_control_common.epever_control_tool()
+
 if (len(sys.argv) < 1):
 	print("Usage: epever_controlvx.py <control number>")
 	sys.exit(0)
@@ -115,15 +118,30 @@ for portName in portNames:
     # "Charging equipment output voltage"
     response = client.read_input("Charging equipment output voltage")
     strr = str(response)
-    valV = valV + float(strr.split('=', 1)[1].strip()[:-1]) #extract value
+    cls_epever_control_tool.to_numericval_unit(strr)
+    strvalV = cls_epever_control_tool.to_numericval
+
+    if strvalV == '-': #response = 'Non'
+        valV = valV #extract value
+    else:
+        valV = valV + float(strvalV) #extract value
+    
     # "Charging equipment output current"
     response = client.read_input("Charging equipment output current")
     strr = str(response)
-    valC = valC + float(strr.split('=', 1)[1].strip()[:-1]) #extract value
+    cls_epever_control_tool.to_numericval_unit(strr)
+    strvalC = cls_epever_control_tool.to_numericval
+
+    if strvalC == '-': #response = 'Non'
+        valC = valC #extract value
+    else:
+        valC = valC + float(strvalC) #extract value
 
     client.close() #end serial connection
     iCount = iCount + 1
+
 valV = valV / iCount    #average of cc output voltage
+
 lvalue.append(valV) #history data
 lvalue.append(valC) #history data
 
@@ -179,7 +197,7 @@ if dt_now > Starttime:
                         elif relay_status3 == "on":
                             lvalue.append('relay full on dt_time>Startime dt_time<Endtime valV>Vmax control full ') #history data1:2
                             linemsg_update_flg = linemsg_all
-                            linemsg_msg = 'relay full on <br>dt_time>Startime <br>dt_time<Endtime <br>valV>Vmax <br>control full '
+                            linemsg_msg = 'relay full on <br>dt_time>Startime <br>dt_time<Endtime <br>valV>Vmax <br>control full <br>'
         elif valV < Vmin:
             result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3, shell=True, stdout = subprocess.PIPE)
             relay_status3 = result.stdout.decode().replace('\r\n','')
@@ -207,11 +225,11 @@ if dt_now > Starttime:
                         elif relay_status1 == "off":
                             lvalue.append('relay all off dt_time>Startime dt_time<Endtime valV<Vmin not control') #history data
                             linemsg_update_flg = linemsg_all
-                            linemsg_msg = 'relay all off <br>dt_time>Startime <br>dt_time<Endtime <br>valV<Vmin <br>not control'
+                            linemsg_msg = 'relay all off <br>dt_time>Startime <br>dt_time<Endtime <br>valV<Vmin <br>not control<br>'
         else:                    
             lvalue.append('dt_time>Startime dt_time<Endtime Vmin<valV<Valmax') #history data
             linemsg_update_flg = linemsg_all
-            linemsg_msg = 'dt_time>Startime <br>dt_time<Endtime <br>Vmin<valV<Valmax'
+            linemsg_msg = 'dt_time>Startime <br>dt_time<Endtime <br>Vmin<valV<Valmax<br>'
 
 #GTI OFF
     elif dt_now > Endtime: #Process End              
@@ -222,7 +240,7 @@ if dt_now > Starttime:
                 result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay3 + ' off', shell=True)
                 lvalue.append('relay' + Relay3 + ' off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                 linemsg_update_flg = linemsg_all
-                linemsg_msg = 'relay' + Relay3 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)'
+                linemsg_msg = 'relay' + Relay3 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)<br>'
             elif relay_status3 == "off":
                     result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2, shell=True, stdout = subprocess.PIPE)
                     relay_status2 = result.stdout.decode().replace('\r\n','')
@@ -231,7 +249,7 @@ if dt_now > Starttime:
                         result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay2 + ' off', shell=True)
                         lvalue.append('relay' + Relay2 + ' off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                         linemsg_update_flg = linemsg_all
-                        linemsg_msg = 'relay' + Relay2 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)'
+                        linemsg_msg = 'relay' + Relay2 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)<br>'
                     elif relay_status2 == "off":
                         result = subprocess.run(py + ' ' + numato_relayread_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1, shell=True, stdout = subprocess.PIPE)
                         relay_status1 = result.stdout.decode().replace('\r\n','')
@@ -240,7 +258,7 @@ if dt_now > Starttime:
                             result = subprocess.run(py + ' ' + numato_relaywrite_py + ' ' + numato_portName + ' ' + numato_baudrate + ' ' + Relay1 + ' off', shell=True)
                             lvalue.append('relay' + Relay1 + ' off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                             linemsg_update_flg = linemsg_all
-                            linemsg_msg = 'relay' + Relay1 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)'
+                            linemsg_msg = 'relay' + Relay1 + ' off <br>dt_time>Startime <br>dt_time>Endtime <br>process end(time over)<br>'
                         elif relay_status1 == "off":
                             lvalue.append('relay all off dt_time>Startime dt_time>Endtime process end(time over)') #history data
                             linemsg_update_flg = linemsg_all
@@ -249,17 +267,17 @@ if dt_now > Starttime:
     elif dt_now == Endtime:
         lvalue.append('dt_now=Endtime else') #history data
         linemsg_update_flg = linemsg_all
-        linemsg_msg = 'dt_now=Endtime else'
+        linemsg_msg = 'dt_now=Endtime else<br>'
 
 #GTI OFF
 elif dt_now < Starttime: #before process start
     lvalue.append('dt_time<Starttime dttime<Endtime before process start') #history data
     linemsg_update_flg = linemsg_all
-    linemsg_msg = 'dt_time<Starttime dttime<Endtime before process start'
+    linemsg_msg = 'dt_time<Starttime<br> dttime<Endtime<br> before process start<br>'
 elif dt_now == Starttime:
     lvalue.append('dt_now=Starttime else') #history data
     linemsg_update_flg = linemsg_all
-    linemsg_msg = 'dt_now=Starttime else'
+    linemsg_msg = 'dt_now=Starttime<br> else<br>'
 
 print(lvalue)
 

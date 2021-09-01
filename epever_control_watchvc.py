@@ -17,6 +17,10 @@ portNames = epever_control_setting.epever_control_portName()
 baudRate = int(epever_control_setting.epever_control_ccbaudrate())
 dbPath = epever_control_setting.epever_control_dbpath()
 
+import epever_control_common
+cls_epever_control_tool = epever_control_common.epever_control_tool()
+
+
 # import EPsolarTracerClient
 from pyepsolartracer.client import EPsolarTracerClient
 from pyepsolartracer.registers import registers,coils
@@ -59,37 +63,49 @@ for portName in portNames:
 	response = client.read_input("Charging equipment input voltage")
 	strr = str(response)
 	print(strr)
-	exvalue = strr.split('=')[1].strip()[:-1] #extract value
-	print(exvalue) #extract value
-	lvalue.append(exvalue)
-	Vin = Vin + float(exvalue)
+	result = cls_epever_control_tool.to_numericval_unit(strr)
+	value = cls_epever_control_tool.to_numericval
+	lvalue.append(value)
+	if value == '-': #response = 'Non'
+		value = 0 #extract value
+    
+	Vin = Vin + float(value)
 
 	# "Charging equipment input current"
 	response = client.read_input("Charging equipment input current")
 	strr = str(response)
 	print(strr)
-	exvalue = strr.split('=', 1)[1].strip()[:-1] #extract value
-	print(exvalue) #extract value
-	lvalue.append(exvalue)
-	Cin = Cin + float(exvalue)
+	result = cls_epever_control_tool.to_numericval_unit(strr)
+	value = cls_epever_control_tool.to_numericval
+	lvalue.append(value)
+	if value == '-': #response = 'Non'
+		value = 0 #extract value
+		
+	Cin = Cin + float(value)
 
 	# "Charging equipment output voltage"
 	response = client.read_input("Charging equipment output voltage")
 	strr = str(response)
 	print(strr)
-	exvalue = strr.split('=', 1)[1].strip()[:-1] #extract value
-	print(exvalue) #extract value
-	lvalue.append(exvalue)
-	Vout = Vout + float(exvalue)
+	result = cls_epever_control_tool.to_numericval_unit(strr)
+	value = cls_epever_control_tool.to_numericval
+	lvalue.append(value)
+	if value == '-': #response = 'Non'
+		value = 0 #extract value
+
+	Vout = Vout + float(value)
 
 	# "Charging equipment output current"
 	response = client.read_input("Charging equipment output current")
 	strr = str(response)
 	print(strr)
-	exvalue = strr.split('=', 1)[1].strip()[:-1] #extract value
-	print(exvalue) #extract value
-	lvalue.append(exvalue)
-	Cout = Cout + float(exvalue)
+	result = cls_epever_control_tool.to_numericval_unit(strr)
+	value = cls_epever_control_tool.to_numericval
+	lvalue.append(value)
+	if value == '-': #response = 'Non'
+		value = 0 #extract value
+		
+	Cout = Cout + float(value)
 
 	print(lvalue)
 
