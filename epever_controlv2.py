@@ -106,7 +106,7 @@ lvalue.append(ctrlNum) #history data
 # initialize CC data
 valV = 0.0
 valC = 0.0
-iCount = 0
+#iCount = 0
 # the serial client connection
 for portName in portNames:
     print(portName)
@@ -124,7 +124,10 @@ for portName in portNames:
     if strvalV == '-': #response = 'Non'
         valV = valV #extract value
     else:
-        valV = valV + float(strvalV) #extract value
+        if(valV < float(strvalV)):
+            valV = float(strvalV)   #set larger voltage
+        
+    #    valV = valV + float(strvalV) #extract value
     
     # "Charging equipment output current"
     response = client.read_input("Charging equipment output current")
@@ -138,9 +141,9 @@ for portName in portNames:
         valC = valC + float(strvalC) #extract value
 
     client.close() #end serial connection
-    iCount = iCount + 1
+#    iCount = iCount + 1
 
-valV = valV / iCount    #average of cc output voltage
+#valV = valV / iCount    #average of cc output voltage
 
 lvalue.append(valV) #history data
 lvalue.append(valC) #history data
