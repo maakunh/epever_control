@@ -67,7 +67,7 @@ for portName in portNames:
 	value = cls_epever_control_tool.to_numericval
 	lvalue.append(value)
 	if value == '-': #response = 'Non'
-		value = 0 #extract value
+		value = '0' #extract value
     
 	Vin = Vin + float(value)
 
@@ -79,7 +79,7 @@ for portName in portNames:
 	value = cls_epever_control_tool.to_numericval
 	lvalue.append(value)
 	if value == '-': #response = 'Non'
-		value = 0 #extract value
+		value = '0' #extract value
 		
 	Cin = Cin + float(value)
 
@@ -91,7 +91,7 @@ for portName in portNames:
 	value = cls_epever_control_tool.to_numericval
 	lvalue.append(value)
 	if value == '-': #response = 'Non'
-		value = 0 #extract value
+		value = '0' #extract value
 
 	Vout = Vout + float(value)
 
@@ -103,7 +103,7 @@ for portName in portNames:
 	value = cls_epever_control_tool.to_numericval
 	lvalue.append(value)
 	if value == '-': #response = 'Non'
-		value = 0 #extract value
+		value = '0' #extract value
 		
 	Cout = Cout + float(value)
 
