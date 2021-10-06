@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>epever control</title>
+        <meta http-equiv="refresh" content="30;URL=/epever_control/read_all">
+    </head>
+    <body>
+    
+    <a href="/epever_control/">Home</a> | <a href="/epever_control/power">Power Genaration</a> | <a href="/epever_control/control_history">Control History</a> | <a href="/epever_control/read_simple">Voltage and Current</a> | <b>All Charge Controller Data</b> [<a href="/epever_control/read_all">reload</a>] | <a href="/epever_control/setting">Setting</a> <br>
+
+        <table bgcolor="#000000">
+        <tr bgcolor="#87CEFA">
+            <td>datetime</td>
+            <td>port</td>    
+        {% for col in read_col_list %}
+            <td>{{col}}</td>
+        {% endfor %}
+        </tr>
+
+        {% for read_db in read_db_list %}
+            <tr bgcolor="#FFFFFF">
+            {% for j in range(read_db | length) %}
+                <td>{{read_db[j]}}</td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        </table>
+    </body>
+</html>

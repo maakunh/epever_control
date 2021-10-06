@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>epever control</title>
+        <meta http-equiv="refresh" content="30;URL=/epever_control/read_simple">
+        <script language="javascript" type="text/javascript">
+            const lvNormal = 0;
+            const lvError = 1;
+
+            function validation(){
+                return lvNormal;
+            }
+
+            function load(arg){
+                    if (validation() === lvNormal) {
+                        sendData(arg);
+                    }
+                    else{
+                        document.getElementById("msg").innerText = "Validation error. Check input values.";
+                    }
+            }
+
+            function sendData(arg) {
+                        const form = document.forms["myForm"];
+
+                        //add element name="dt_now" depending on operation
+                        let addelement = document.createElement('input');//
+                        addelement.setAttribute('type', 'hidden');
+                        addelement.setAttribute('name', 'dt_now');
+                        if(arg === "-1"){ //back button pushed
+                            addelement.setAttribute('value', '{{dt_back}}');
+                        }
+                        if(arg === "0"){
+                            addelement.setAttribute('value', document.getElementById("now").value);
+                        }
+                        if(arg === "1"){ //forward button pushed
+                            addelement.setAttribute('value', '{{dt_forward}}');
+                        }
+                        document.myForm.appendChild(addelement);// add element
+
+                        form.method = "POST";
+                        form.action = "/epever_control/read_simple_post";
+                        form.submit();
+            }
+
+        </script>
+    </head>
+    <body>
+    
+    <a href="/epever_control/">Home</a> | <a href="/epever_control/power">Power Genaration</a> | <a href="/epever_control/control_history">Control History</a> | <b>Voltage and Current</b> [<a href="/epever_control/read_simple">reload</a>] | <a href="/epever_control/read_all">All Charge Controller Data</a> | <a href="/epever_control/setting">Setting</a> <br>
+
+        <b><font color="red"><label id="msg">{{msg}}</label></font></b><br>
+
+        <form id="myForm" name="myForm">
+            <button name="back" onclick="load('-1')"><<</button> <input type="date" id="now" name="now" value="{{dt_now}}" onblur="load('0')"><button name="update" onclick="load('0')">update</button>{% if flg_forward == 2 %}<button name="foward" onclick="load('1')">>></button>{% endif %}
+        </form>
+
+        <canvas id="VChart"></canvas><canvas id="CChart"></canvas>
+        <!--<script src="/chart.js"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js"></script>
+    
+        <br>
+        <br>
+        <br>
+      <script>
+        var X = {{ivoltageX|tojson}}
+        var Y1 = {{ivoltageY|tojson}}
+        var Y2 = {{ovoltageY|tojson}}
+        var ctx = document.getElementById("VChart");
+        var VChart = new Chart(ctx, {
+        data: {
+            labels:X,
+            datasets: [
+            {
+              type: 'line',
+              label: 'Input Voltage',
+              data: Y1,
+              backgroundColor: "rgba(219,39,91,0.5)"
+            },
+            {
+              type: 'line',
+              label: 'Output Voltage',
+              data: Y2,
+              backgroundColor: "rgba(130,201,169,0.5)"
+            }
+            ]
+        },
+        options: {
+            legend: {
+                display: true
+            },
+            title: {
+                display: true,
+                text: 'Voltage in {{str_dt[0]}}'
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'datetime',
+                    },
+                    ticks: {
+                    suggestedMax: 10,
+                    suggestedMin: 0,
+                    stepSize: 30,
+                    }
+
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Voltage',
+                    },
+                    ticks: {
+                    suggestedMax: 10,
+                    suggestedMin: 0,
+                    stepSize: 5,
+                    }
+                }]
+            }
+        }
+      });
+      </script>
+
+<script>
+    var X = {{icurrentX|tojson}}
+    var Y1 = {{icurrentY|tojson}}
+    var Y2 = {{ocurrentY|tojson}}
+    var ctx = document.getElementById("CChart");
+    var CChart = new Chart(ctx, {
+    data: {
+        labels:X,
+        datasets: [
+        {
+          type: 'line',
+          label: 'Input Current',
+          data: Y1,
+          backgroundColor: "rgba(219,39,91,0.5)"
+        },
+        {
+          type: 'line',
+          label: 'Output Current',
+          data: Y2,
+          backgroundColor: "rgba(130,201,169,0.5)"
+        }
+        ]
+    },
+    options: {
+        legend: {
+            display: true
+        },
+        title: {
+            display: true,
+            text: 'Current in {{str_dt[0]}}'
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'datetime',
+                },
+                ticks: {
+                suggestedMax: 10,
+                suggestedMin: 0,
+                stepSize: 30,
+                }
+
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Current',
+                },
+                ticks: {
+                suggestedMax: 10,
+                suggestedMin: 0,
+                stepSize: 5,
+                }
+            }]
+        }
+    }
+  });
+  </script>
+
+        <table bgcolor="#000000">
+        <tr bgcolor="#87CEFA">
+            <td>datitime</td>
+            <td>port</td>
+            <td>input voltage</td>
+            <td>input current</td>
+            <td>output voltage</td>
+            <td>output current</td>
+        </tr>
+    
+        {% for read_db in read_db_list %}
+        <tr bgcolor="#FFFFFF">
+            <td>{{read_db[0]}}</td>
+            <td>{{read_db[1]}}</td>
+            <td>{{read_db[2]}}</td>
+            <td>{{read_db[3]}}</td>
+            <td>{{read_db[4]}}</td>
+            <td>{{read_db[5]}}</td>
+        </tr>
+        {% endfor %}
+        </table>
+    </body>
+</html>

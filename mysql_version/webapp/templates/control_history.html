@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>epever control</title>
+        <meta http-equiv="refresh" content="30;URL=/epever_control/control_history">
+    </head>
+    <body>
+
+    <a href="/epever_control/">Home</a> | <a href="/epever_control/power">Power Genaration</a> | <b>Control History</b> [<a href="/epever_control/control_history">reload</a>] | <a href="/epever_control/read_simple">Voltage and Current</a> | <a href="/epever_control/read_all">All Charge Controller Data</a> | <a href="/epever_control/setting">Setting</a> <br>
+
+        <table bgcolor="#000000">
+        <tr bgcolor="#87CEFA">
+            <td>datetime</td>
+            <td>num</td>
+            <td>voltage</td>
+            <td>current</td>
+            <td>operation</td>
+        </tr>
+    
+        {% for read_db in read_db_list %}
+        <tr bgcolor="#FFFFFF">
+            <td>{{read_db[0]}}</td>
+            <td>{{read_db[1]}}</td>
+            <td>{{read_db[2]}}</td>
+            <td>{{read_db[3]}}</td>
+            {% if read_db[5] == 2 %}
+            <td bgcolor="#FF0000">{{read_db[4]}}</td>
+            {% elif read_db[5] == 9 %}
+            <td bgcolor="#C0C0C0">{{read_db[4]}}</td>
+            {% else %}
+            <td>{{read_db[4]}}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </table>
+    </body>
+</html>

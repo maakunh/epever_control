@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="refresh" content="30;URL=/epever_control/">
+    <title>epever control</title>
+    <script language="javascript" type="text/javascript">
+        const lvNormal = 0;
+        const lvError = 1;
+        const flgon = 2;
+        const flgoff = 9;
+
+        document.body.style.fontSize = '130%';
+
+        function onload(){
+                if (validation() === lvNormal) {
+
+                    document.getElementById("title").style.fontSize = "150%";
+                    document.getElementById("msg").style.fontSize = "150%";
+                    document.getElementById("ipr").style.fontSize = "150%";
+                    document.getElementById("ivr").style.fontSize = "150%";
+                    document.getElementById("icr").style.fontSize = "150%";
+                    document.getElementById("opr").style.fontSize = "150%";
+                    document.getElementById("ovr").style.fontSize = "150%";
+                    document.getElementById("ocr").style.fontSize = "150%";
+                    document.getElementById("ip").style.fontSize = "150%";
+                    document.getElementById("iv").style.fontSize = "150%";
+                    document.getElementById("ic").style.fontSize = "150%";
+                    document.getElementById("op").style.fontSize = "150%";
+                    document.getElementById("ov").style.fontSize = "150%";
+                    document.getElementById("oc").style.fontSize = "150%";
+
+                    document.getElementById("ip").style.backgroundColor = "#7CFC00"; //lawngreen
+                    document.getElementById("iv").style.backgroundColor = "#7CFC00"; //lawngreen
+                    document.getElementById("ic").style.backgroundColor = "#7CFC00"; //lawngreen
+                    document.getElementById("op").style.backgroundColor = "#7CFC00"; //lawngreen
+                    document.getElementById("ov").style.backgroundColor = "#7CFC00"; //lawngreen
+                    document.getElementById("oc").style.backgroundColor = "#7CFC00"; //lawngreen
+
+                    {% if flg[0] == 1 %}
+                        document.getElementById("ip").style.backgroundColor = "#FFC0CB"; //pink
+                    {% elif flg[0] == 8 %}
+                        document.getElementById("ip").style.backgroundColor = "#FFFF00"; //yellow
+                    {% endif %}
+                    {% if flg[1] == 1 %}
+                        document.getElementById("iv").style.backgroundColor = "#FFC0CB"; //pink
+                    {% elif flg[1] == 8 %}
+                        document.getElementById("iv").style.backgroundColor = "#FFFF00"; //yellow
+                    {% endif %}
+                    {% if flg[2] == 1 %}
+                        document.getElementById("ic").style.backgroundColor = "#FFC0CB"; //pink
+                    {% elif flg[2] == 8 %}
+                        document.getElementById("ic").style.backgroundColor = "#FFFF00"; //yellow
+                    {% endif %}
+                    {% if flg[3] == 1 %}
+                        document.getElementById("op").style.backgroundColor = "#FFC0CB"; //pink
+                    {% elif flg[3] == 8 %}
+                        document.getElementById("op").style.backgroundColor = "#FFFF00"; //yellow
+                    {% endif %}
+                    {% if flg[4] == 1 %}
+                        document.getElementById("ov").style.backgroundColor = "#FFC0CB"; //pink
+                    {%  elif flg[4] == 8 %}
+                        document.getElementById("ov").style.backgroundColor = "#FFFF00"; //yellow
+                    {% endif %}
+                    {% if flg[5] == 1 %}
+                        document.getElementById("oc").style.backgroundColor = "#FFC0CB"; //pink
+                    {% elif flg[5] == 8 %}
+                        document.getElementById("oc").style.backgroundColor = "#FFFF00"; //yellow
+                    {% endif %}
+
+
+                }
+                else{
+                    document.getElementById("msg").innerText = "Validation error. Check input values.";
+                }
+        }
+
+        function change_input(){
+                if (validation() === lvNormal) {
+                    document.getElementById("msg").innerText = "";
+                }
+                else{
+                    document.getElementById("msg").innerText = "Validation error. Check input values.";
+                }
+        }
+
+        function validation(){
+            return lvNormal;
+       }
+
+        function load(){
+                if (validation() === lvNormal) {
+                    sendData();
+                }
+                else{
+                    document.getElementById("msg").innerText = "Validation error. Check input values."
+                }
+
+        }
+
+        function sendData() {
+                   const form = document.forms["myForm"];
+                    form.method = "POST";
+                    form.action = "/epever_control/setting_post";
+                    form.submit();
+        }
+
+    </script>
+    <style type="text/css">
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body onload="onload()">
+<b>Home</b> [<a href="/epever_control/">reload</a>] | <a href="/epever_control/power">Power Genaration</a> | <a href="/epever_control/control_history">Control History</a> | <a href="/epever_control/read_simple">Voltage and Current</a> | <a href="/epever_control/read_all">All Charge Controller Data</a> | <a href="/epever_control/setting">Setting</a> <br>
+
+<b><font color="red"><label id="msg">{{msg}}</label></font></b><br>
+
+        <p id="title">Current Data({{dt_now}})</p>
+        <table bgcolor="#000000">
+            <tr id="ipr" bgcolor="#FFFFFF">
+                <td rowspan="3" bgcolor="#87CEFA">Input from PV</td><td bgcolor="#87CEFA">Power: </td><td><input type="text" id="ip" name="ip" value="{{input_power}}W"></td>
+            </tr>
+            <tr id="ivr" bgcolor="#87CEFA">
+                <td bgcolor="#87CEFA">Voltage: </td><td><input type="text" id="iv" name="iv" value="{{input_voltage}}V"></td>
+            </tr>
+            <tr id="icr" bgcolor="#FFFFFF">
+                <td bgcolor="#87CEFA">Current: </td><td><input type="text" id="ic" name="ic" value="{{input_current}}A"></td>
+            </tr>
+            <tr id="opr" bgcolor="#FFFFFF">
+                <td rowspan="3" bgcolor="#87CEFA">Output to Battery</td><td bgcolor="#87CEFA">Power: </td><td><input type="text" id="op" name="op" value="{{output_power}}W"></td>
+            </tr>
+            <tr id="ovr" bgcolor="#FFFFFF">
+                <td bgcolor="#87CEFA">Voltage: </td><td><input type="text" id="ov" name="ov" value="{{output_voltage}}V"></td>
+            </tr>
+            <tr id="ocr" bgcolor="#FFFFFF">
+                <td bgcolor="#87CEFA">Current: </td><td><input type="text" id="oc" name="oc" value="{{output_current}}A"></td>
+            </tr>
+        </table>
+
+        <canvas id="DailyBarChart"></canvas>
+        <canvas id="MonthlyBarChart"></canvas>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js"></script>
+          <script>
+              var ctx = document.getElementById("DailyBarChart");
+              var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: ['{{md[6]}}', '{{md[5]}}', '{{md[4]}}', '{{md[3]}}', '{{md[2]}}', '{{md[1]}}', '{{md[0]}}'],
+                  datasets: [
+                    {
+                      label: 'Input Power kWh',
+                      data: [{{ikwh[6]}}, {{ikwh[5]}}, {{ikwh[4]}}, {{ikwh[3]}}, {{ikwh[2]}}, {{ikwh[1]}}, {{ikwh[0]}}],
+                      backgroundColor: "rgba(219,39,91,0.5)"
+                    },{
+                      label: 'Output Power kWh',
+                      data: [{{okwh[6]}}, {{okwh[5]}}, {{okwh[4]}}, {{okwh[3]}}, {{okwh[2]}}, {{okwh[1]}}, {{okwh[0]}}],
+                      backgroundColor: "rgba(130,201,169,0.5)"
+                    }
+                  ]
+                },
+                options: {
+                    legend: {
+                        display: true
+                    },
+                    title: {
+                        display: true,
+                        text: 'Daily Power Generation'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'date',
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'kWh',
+                            },
+                        ticks: {
+                            suggestedMax: 10,
+                            suggestedMin: 0,
+                            stepSize: 1,
+                            }
+                        }]
+                    }
+                }
+              });
+          </script>
+          <script>
+              var ctx = document.getElementById("MonthlyBarChart");
+              var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: ['{{mm[11]}}', '{{mm[10]}}', '{{mm[9]}}', '{{mm[8]}}', '{{mm[7]}}', '{{mm[6]}}', '{{mm[5]}}', '{{mm[4]}}', '{{mm[3]}}', '{{mm[2]}}', '{{mm[1]}}', '{{mm[0]}}'],
+                  datasets: [
+                    {
+                      label: 'Input Power kWh',
+                      data: [{{ikwhm[11]}}, {{ikwhm[10]}}, {{ikwhm[9]}}, {{ikwhm[8]}}, {{ikwhm[7]}}, {{ikwhm[6]}}, {{ikwhm[5]}}, {{ikwhm[4]}}, {{ikwhm[3]}}, {{ikwhm[2]}}, {{ikwhm[1]}}, {{ikwhm[0]}}],
+                      backgroundColor: "rgba(219,39,91,0.5)"
+                    },{
+                      label: 'Output Power kWh',
+                      data: [{{okwhm[11]}}, {{okwhm[10]}}, {{okwhm[9]}}, {{okwhm[8]}}, {{okwhm[7]}}, {{okwhm[6]}}, {{okwhm[5]}}, {{okwhm[4]}}, {{okwhm[3]}}, {{okwhm[2]}}, {{okwhm[1]}}, {{okwhm[0]}}],
+                      backgroundColor: "rgba(130,201,169,0.5)"
+                    }
+                  ]
+                },
+                options: {
+                    legend: {
+                        display: true
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Power Generation'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'date',
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'kWh',
+                            },
+                        ticks: {
+                            suggestedMax: 10,
+                            suggestedMin: 0,
+                            stepSize: 5,
+                            }
+                        }]
+                    }
+                }
+              });
+          </script>
+</body>
+</html>
